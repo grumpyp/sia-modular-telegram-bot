@@ -1,28 +1,32 @@
-from fastapi import FastAPI
-from aiogram import Bot, Dispatcher
-from pydantic_settings import BaseSettings
-from typing import List
+from telegram import Update
+from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
+from config import settings
+from src._telegram.commands import COMMANDS
+import src._telegram.commands as commands
 
 
-class AppSettings(BaseSettings):
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        env_prefix = "app_"
 
-    DATABASE_URL: str
-    DEVELOPMENT: bool = True
-    TELEGRAM_BOT_TOKEN: str
-    WEBHOOK_URL: str
+if __name__ == '__main__':
+    application = ApplicationBuilder().token(settings.TELEGRAM_BOT_TOKEN).build()
+    
+    # Common
+    start_handler = CommandHandler('start', commands.start)
+    list_commands_handler = CommandHandler('listcommands', commands.list_commands)
+    unknown_handler = MessageHandler(filters.COMMAND, commands.unknown)
 
-settings = AppSettings()
-
-app = FastAPI()
-bot = Bot(token=settings.TELEGRAM_BOT_TOKEN)
-dp = Dispatcher(bot)
+    # SIA related
+    balance_handler = CommandHandler('balance', commands.balance)
 
 
-@app.on_event("startup")
-async def startup():
-    await bot.set_webhook(settings.WEBHOOK_URL)
-    # setup db 
+    # register handler
+    application.add_handler(start_handler)
+    application.add_handler(list_commands_handler)
+    application.add_handler(balance_handler)
+    
+    # handles confirmation for the registration
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, commands.handle_message))
+
+    # this must be the last handler otherwise it doesn't recognize the others
+    application.add_handler(unknown_handler)
+    
+    application.run_polling()
