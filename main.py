@@ -3,11 +3,15 @@ from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, Messa
 from config import settings
 from src._telegram.commands import COMMANDS
 import src._telegram.commands as commands
+from src.database.session import get_session
 
 
 
 if __name__ == '__main__':
     application = ApplicationBuilder().token(settings.TELEGRAM_BOT_TOKEN).build()
+
+    # db handler also used to setup models on start
+    db = get_session()
     
     # Common
     start_handler = CommandHandler('start', commands.start)

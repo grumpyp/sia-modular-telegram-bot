@@ -1,3 +1,4 @@
+local_dev_db.db
 .secretenv
 .vscode
 # Byte-compiled / optimized / DLL files
