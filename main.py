@@ -15,7 +15,12 @@ if __name__ == '__main__':
     
     # Common
     start_handler = CommandHandler('start', commands.start)
+    cancel_handler = CommandHandler('cancel', commands.cancel)
+    help_handler = CommandHandler('help', commands.help)
     list_commands_handler = CommandHandler('listcommands', commands.list_commands)
+    list_events_handler = CommandHandler('listevents', commands.list_events)
+    cancel_event_handler = CommandHandler('cancelevent', commands.cancel_subscription)
+    show_subscriptions = CommandHandler('subscriptions', commands.show_subscriptions)
     unknown_handler = MessageHandler(filters.COMMAND, commands.unknown)
 
     # SIA related
@@ -24,11 +29,16 @@ if __name__ == '__main__':
 
     # register handler
     application.add_handler(start_handler)
+    application.add_handler(cancel_handler)
+    application.add_handler(help_handler)
+    application.add_handler(list_events_handler)
+    application.add_handler(cancel_event_handler)
+    application.add_handler(show_subscriptions)
     application.add_handler(list_commands_handler)
     application.add_handler(balance_handler)
     
     # handles confirmation for the registration
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, commands.handle_message))
+    application.add_handler(CommandHandler('register', commands.handle_message))
 
     # this must be the last handler otherwise it doesn't recognize the others
     application.add_handler(unknown_handler)

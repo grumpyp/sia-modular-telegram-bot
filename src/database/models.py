@@ -17,8 +17,9 @@ class User(Base):
     
     id = Column(Integer, primary_key=True)
     username = Column(String)
+    is_bot = Column(Integer)
+    language_code = Column(String)
     first_name = Column(String)
-    last_name = Column(String)
     
     events = relationship("Event", secondary=subscriptions_table, back_populates="subscribers")
 

@@ -8,6 +8,6 @@ sessionlocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 def get_session(s: Session = sessionlocal) -> Session:
     session = s()
     try:
-        yield session
+        return session
     finally:
         session.close()
