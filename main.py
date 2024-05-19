@@ -1,14 +1,27 @@
-from telegram import Update
+from telegram import Update, BotCommand
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
 from config import settings
 from src._telegram.commands import COMMANDS
 import src._telegram.commands as commands
 from src.database.session import get_session
 
-
+commands_list = [
+    BotCommand("start", "Start the bot"),
+    BotCommand("cancel", "Cancel the current operation"),
+    BotCommand("help", "Show help message"),
+    BotCommand("listcommands", "List all commands"),
+    BotCommand("listevents", "List all events"),
+    BotCommand("cancelevent", "Cancel an event subscription"),
+    BotCommand("subscriptions", "Show your subscriptions"),
+    BotCommand("balance", "Check your balance"),
+    BotCommand("register", "Register for an event"),
+]
 
 if __name__ == '__main__':
     application = ApplicationBuilder().token(settings.TELEGRAM_BOT_TOKEN).build()
+
+    # Set commands for the bot menu
+    application.bot.set_my_commands(commands_list)
 
     # db handler also used to setup models on start
     db = get_session()
@@ -25,7 +38,6 @@ if __name__ == '__main__':
 
     # SIA related
     balance_handler = CommandHandler('balance', commands.balance)
-
 
     # register handler
     application.add_handler(start_handler)
