@@ -12,5 +12,9 @@ class AppSettings(BaseSettings):
     TELEGRAM_BOT_TOKEN: str
     WEBHOOK_URL: str
     WEBHOOK_PATH: str = "/telegram/webhook"  # You can customize this
+    HOSTD_URL: str = ""
+    HOSTD_USERNAME: str = ""
+    HOSTD_PASSWORD: str = ""
+    POLL_INTERVAL: int = 5
 
 settings = AppSettings()
