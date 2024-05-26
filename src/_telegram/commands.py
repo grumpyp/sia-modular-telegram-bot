@@ -1,6 +1,8 @@
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
 from telegram import Update, ForceReply
 from src.database.session import get_session
+from sqlalchemy.exc import IntegrityError
+
 from src.database.models import User, Event
 
 
@@ -60,22 +62,49 @@ async def list_events(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
 # Sign up to an event
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
-    user = DB.query(User).filter_by(id=user.id).first()
+    db_user = DB.query(User).filter_by(id=user.id).first()
+
+    if not db_user:
+        await update.message.reply_text("User not found in the database.")
+        return
+
     command_parts = update.message.text.split()
     if len(command_parts) < 2:
         await update.message.reply_text("Please provide an event ID!")
         return
-    event = DB.query(Event).filter_by(event_id=command_parts[1]).first()
-    if event is None:
+
+    event_id = command_parts[1]
+    event = DB.query(Event).filter_by(event_id=event_id).first()
+
+    if not event:
         await update.message.reply_text("Event not found.")
         return
-    # check if user is already subscribed
-    if event in user.events:
+
+    # Debugging: Print current subscriptions before the operation
+    print(f"User {db_user.id} current subscriptions before: {[e.event_id for e in db_user.events]}")
+
+    # Check if user is already subscribed
+    if event in db_user.events:
         await update.message.reply_text("You are already subscribed to this event.")
         return
-    user.events.append(event)
+
+    try:
+        db_user.events.append(event)
+        print(f"Attempting to register user {db_user.id} to event {event.event_id}")
+        DB.commit()
+        print(f"User {db_user.id} successfully registered to event {event.event_id}")
+        await update.message.reply_text(f"Successfully registered to event {event.event_name}!")
+    except IntegrityError as e:
+        DB.rollback()
+        print(f"IntegrityError: {e}")  # Debugging: Print the error message
+        await update.message.reply_text("Failed to register for the event. It seems you are already subscribed.")
+    finally:
+        # Debugging: Print current subscriptions after attempting to register
+        refreshed_user = DB.query(User).filter_by(id=user.id).first()  # Refresh the user object
+        print(f"User {refreshed_user.id} current subscriptions after: {[e.event_id for e in refreshed_user.events]}")
+
+    # Ensure the database session handling is correct
     DB.commit()
-    await update.message.reply_text(f"Successfully registered to event {event.event_name}!")
 
 # Show all event subscriptions
 async def show_subscriptions(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

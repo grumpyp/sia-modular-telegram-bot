@@ -44,6 +44,14 @@ class SiaHostdHandler(SiaBaseHandler):
         response = await self.make_request(endpoint, self.hostd_auth, method=method)
         return response
 
+    async def dismiss_alert(self, alert_id):
+        endpoint = f"{self.hostd_url}/api/alerts"
+        method = "POST"
+        data = [alert_id]
+        response = await self.make_request(endpoint, self.hostd_auth, method=method, data=data)
+        return response
+
+
 class SiaRenterdHandler(SiaBaseHandler):
     async def todo(self):
         pass
@@ -60,9 +68,11 @@ async def main():
     # Example usage
     host_status = await hostd_handler.get_accounts()
     wallet_info = await hostd_handler.get_wallet_information()
+    alerts = await hostd_handler.get_alerts()
     
-    print(host_status)
-    print(wallet_info)
+    # print(host_status)
+    # print(wallet_info)
+    print(alerts)
 
 if __name__ == "__main__":
     asyncio.run(main())

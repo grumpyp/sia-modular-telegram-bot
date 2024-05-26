@@ -7,6 +7,8 @@ from src._telegram.commands import COMMANDS
 import src._telegram.commands as commands
 from src.database.session import get_session
 from src.sia.sia_handler import SiaHostdHandler
+from src.database.models import User, Event
+
 
 nest_asyncio.apply()
 
@@ -30,14 +32,46 @@ async def poll_sia_hostd(application):
     
     while True:
         # accounts_info = await hostd_handler.get_accounts()
-        wallet_info = await hostd_handler.get_wallet_information()
-        print(wallet_info)
+        # wallet_info = await hostd_handler.get_wallet_information()
+        # print(wallet_info)
+        # get all events of type balance
 
-        # Example threshold check
-        # PSEUDO CODE
-        """        if wallet_info['balance'] < settings.BALANCE_THRESHOLD:
-            await application.bot.send_message(chat_id=settings.ADMIN_CHAT_ID, text=f"Low balance alert: {wallet_info['balance']}")
-        """
+        # iterate over, if balance is below threshold, send alert
+
+
+        # get all alerts
+        # alerts = await hostd_handler.get_alerts()
+        # mock alert
+        alerts = [
+            {
+                "id": "h:db6be3723a3c5c5d6a83b5448a606a429f5ec62700c678627c55b6a449c9f565",
+                "severity": "info",
+                "message": "Volume initialized",
+                "data": {
+                "elapsed": 186111899,
+                "volumeID": 2
+                },
+                "timestamp": "2023-06-02T22:33:14.921184149Z"
+            }
+        ]
+
+        # get all event subsriber with including their alerts severity settings
+        database = get_session()
+        for alert in alerts:
+            # the event description maps the severity
+            event = database.query(Event).filter_by(event_description=alert['severity']).first()
+            if event:
+                subscribers = event.subscribers
+                for subscriber in subscribers:
+                    # send the alert to the subscriber
+                    await application.bot.send_message(chat_id=subscriber.id, text=alert['message'])
+                
+                # dismiss alert
+                if settings.ALERTS_DISMISS_AFTER_SENDING:
+                    await hostd_handler.dismiss_alert(alert['id'])
+
+
+
         await asyncio.sleep(settings.POLL_INTERVAL)  # Poll every defined interval
 
 async def main():
