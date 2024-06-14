@@ -2,8 +2,9 @@ from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, Messa
 from telegram import Update, ForceReply
 from src.database.session import get_session
 from sqlalchemy.exc import IntegrityError
-
+from src.sia.sia_handler import SiaHostdHandler
 from src.database.models import User, Event
+from config import settings
 
 
 COMMANDS = {
@@ -180,12 +181,12 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
 ## SIA related
 
 async def balance(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    # Extract arguments from the command
-    args = context.args
-    if len(args) < 2:
-        await update.message.reply_text('Please provide both network and wallet arguments like this: /balance <network> <wallet>')
-        return
-    network, wallet = args[0], args[1]
     # SIA API Call
+    hostd_url = settings.HOSTD_URL
+    hostd_username = settings.HOSTD_USERNAME
+    hostd_password = settings.HOSTD_PASSWORD
+    hostd_handler = SiaHostdHandler(hostd_url, hostd_username=hostd_username, hostd_password=hostd_password)
+    balance = SiaHostdHandler.get_metrics_information()
+    balance = balance.get('balance', 'N/A')
     
-    await update.message.reply_text(f"Checking balance on {network} for wallet {wallet}...")
+    await update.message.reply_text(f"Balance: {balance}")
