@@ -34,7 +34,20 @@ async def poll_sia_hostd(application):
         database = get_session()
         # metrics = await hostd_handler.get_metrics_information()
         # mock metrics
-        metrics = {"balance": 10}
+        metrics = {"balance": 10, "totalSectors": 1}
+
+        # get all events of type storage
+        event = database.query(Event).filter_by(event_name="storage").first()
+        if event:
+            storage = metrics.get('totalSectors', None)
+            if storage:
+                storage_bytes = storage * 4194304
+                if storage_bytes < settings.STORAGE_TRESHHOLD:
+                    subscribers = event.subscribers
+                    for subscriber in subscribers:
+                        # send the alert to the subscriber
+                        await application.bot.send_message(chat_id=subscriber.id, text="Storage treshhold hit")
+
         # get all events of type balance
         event = database.query(Event).filter_by(event_name="balance").first()
         if event:

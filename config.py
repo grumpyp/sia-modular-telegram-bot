@@ -18,5 +18,7 @@ class AppSettings(BaseSettings):
     POLL_INTERVAL: int = 5
     ALERTS_DISMISS_AFTER_SENDING: bool = True
     BALANCE_TRESHHOLD: int = 1000
+    # totalSectors * 4194304 = number of bytes remaining
+    STORAGE_TRESHHOLD: int = 4194304000
 
 settings = AppSettings()

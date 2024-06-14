@@ -186,7 +186,7 @@ async def balance(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     hostd_username = settings.HOSTD_USERNAME
     hostd_password = settings.HOSTD_PASSWORD
     hostd_handler = SiaHostdHandler(hostd_url, hostd_username=hostd_username, hostd_password=hostd_password)
-    balance = SiaHostdHandler.get_metrics_information()
+    balance = await hostd_handler.get_metrics_information()
     balance = balance.get('balance', 'N/A')
     
     await update.message.reply_text(f"Balance: {balance}")
