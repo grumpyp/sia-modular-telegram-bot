@@ -29,16 +29,23 @@ async def poll_sia_hostd(application):
     hostd_username = settings.HOSTD_USERNAME
     hostd_password = settings.HOSTD_PASSWORD
     hostd_handler = SiaHostdHandler(hostd_url, hostd_username=hostd_username, hostd_password=hostd_password)
-    
+
     while True:
-        # accounts_info = await hostd_handler.get_accounts()
-        # wallet_info = await hostd_handler.get_wallet_information()
-        # print(wallet_info)
+        database = get_session()
+        # metrics = await hostd_handler.get_metrics_information()
+        # mock metrics
+        metrics = {"balance": 10}
         # get all events of type balance
-
-        # iterate over, if balance is below threshold, send alert
-
-
+        event = database.query(Event).filter_by(event_name="balance").first()
+        if event:
+                balance = metrics.get('balance', None)
+                print(balance)
+                print(settings.BALANCE_TRESHHOLD)
+                if balance and balance < settings.BALANCE_TRESHHOLD:
+                    subscribers = event.subscribers
+                    for subscriber in subscribers:
+                        # send the alert to the subscriber
+                        await application.bot.send_message(chat_id=subscriber.id, text="Balance treshhold hit")
         # get all alerts
         # alerts = await hostd_handler.get_alerts()
         # mock alert
@@ -56,7 +63,6 @@ async def poll_sia_hostd(application):
         ]
 
         # get all event subsriber with including their alerts severity settings
-        database = get_session()
         for alert in alerts:
             # the event description maps the severity
             event = database.query(Event).filter_by(event_description=alert['severity']).first()
@@ -68,7 +74,8 @@ async def poll_sia_hostd(application):
                 
                 # dismiss alert
                 if settings.ALERTS_DISMISS_AFTER_SENDING:
-                    await hostd_handler.dismiss_alert(alert['id'])
+                    # await hostd_handler.dismiss_alert(alert['id'])
+                    pass
 
 
 

@@ -17,5 +17,6 @@ class AppSettings(BaseSettings):
     HOSTD_PASSWORD: str = ""
     POLL_INTERVAL: int = 5
     ALERTS_DISMISS_AFTER_SENDING: bool = True
+    BALANCE_TRESHHOLD: int = 1000
 
 settings = AppSettings()

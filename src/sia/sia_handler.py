@@ -43,6 +43,12 @@ class SiaHostdHandler(SiaBaseHandler):
         method = "GET"
         response = await self.make_request(endpoint, self.hostd_auth, method=method)
         return response
+    
+    async def get_metrics_information(self):
+        endpoint = f"{self.hostd_url}/api/metrics"
+        method = "GET"
+        response = await self.make_request(endpoint, self.hostd_auth, method=method)
+        return response
 
     async def dismiss_alert(self, alert_id):
         endpoint = f"{self.hostd_url}/api/alerts"
