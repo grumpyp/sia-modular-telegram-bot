@@ -1,6 +1,6 @@
 # Telegram Bot Setup
 
-Rename `.env` to `.secretenvv.
+Rename `.env` to `.secretenvv`.
 
 1. **Create a Bot via BotFather:**
    - Visit [BotFather](https://telegram.me/BotFather) on Telegram.
