@@ -38,8 +38,8 @@ Rename `.env` to `.secretenvv`.
 
 2. **Monitor Pending Contracts Example:**
    - Use the endpoint: [HostD API - Monitor Pending Contracts](https://api.sia.tech/hostd#87d43895-9980-466b-ba2b-c874af67217b).
-   - Integrate the call in `sia_handler.py`.
+   - Integrate the API-request in `sia_handler.py`.
 
 3. **Add Threshold Logic:**
    - Implement threshold logic in `main.py`.
-   - You can copy and adapt the existing logic from other calls/thresholds.
+   - (You can copy and adapt the existing logic from other calls/thresholds.)
