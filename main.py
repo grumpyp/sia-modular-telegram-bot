@@ -32,9 +32,9 @@ async def poll_sia_hostd(application):
 
     while True:
         database = get_session()
-        # metrics = await hostd_handler.get_metrics_information()
+        metrics = await hostd_handler.get_metrics_information()
         # mock metrics
-        metrics = {"balance": 10, "totalSectors": 1}
+        # metrics = {"balance": 10, "totalSectors": 1}
 
         # get all events of type storage
         event = database.query(Event).filter_by(event_name="storage").first()
@@ -52,28 +52,27 @@ async def poll_sia_hostd(application):
         event = database.query(Event).filter_by(event_name="balance").first()
         if event:
                 balance = metrics.get('balance', None)
-                print(balance)
-                print(settings.BALANCE_TRESHHOLD)
                 if balance and balance < settings.BALANCE_TRESHHOLD:
                     subscribers = event.subscribers
                     for subscriber in subscribers:
                         # send the alert to the subscriber
                         await application.bot.send_message(chat_id=subscriber.id, text="Balance treshhold hit")
+
         # get all alerts
-        # alerts = await hostd_handler.get_alerts()
+        alerts = await hostd_handler.get_alerts()
         # mock alert
-        alerts = [
-            {
-                "id": "h:db6be3723a3c5c5d6a83b5448a606a429f5ec62700c678627c55b6a449c9f565",
-                "severity": "info",
-                "message": "Volume initialized",
-                "data": {
-                "elapsed": 186111899,
-                "volumeID": 2
-                },
-                "timestamp": "2023-06-02T22:33:14.921184149Z"
-            }
-        ]
+        # alerts = [
+        #    {
+        #        "id": "h:db6be3723a3c5c5d6a83b5448a606a429f5ec62700c678627c55b6a449c9f565",
+        #        "severity": "info",
+        #        "message": "Volume initialized",
+        #        "data": {
+        #        "elapsed": 186111899,
+        #        "volumeID": 2
+        #        },
+        #        "timestamp": "2023-06-02T22:33:14.921184149Z"
+        #    }
+        # ]
 
         # get all event subsriber with including their alerts severity settings
         for alert in alerts:

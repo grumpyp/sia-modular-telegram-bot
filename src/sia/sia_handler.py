@@ -78,7 +78,7 @@ async def main():
     
     # print(host_status)
     # print(wallet_info)
-    print(alerts)
+    # print(alerts)
 
 if __name__ == "__main__":
     asyncio.run(main())

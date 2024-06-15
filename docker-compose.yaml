@@ -1,2 +1,0 @@
-# setup webhook
-# https://api.telegram.org/bot<your_bot_token>/setWebhook?url=<your_webhook_url>/webhook/telegram/<your_bot_token>
