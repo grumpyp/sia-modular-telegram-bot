@@ -1,28 +1,45 @@
-# Telegram Setup
+# Telegram Bot Setup
 
-You need to setup the Bot via Botfather (https://telegram.me/BotFather),
+Rename `.env` to `.secretenvv.
 
-then send the botfather a list with your commands `/setcommands` and follow instructions.
+1. **Create a Bot via BotFather:**
+   - Visit [BotFather](https://telegram.me/BotFather) on Telegram.
+   - Follow the instructions to create your bot.
+   - Obtain your bot's API token.
+   - Change update the token in your `.secretenv` file.
 
-# SIA BOT Setup
+2. **Set Bot Commands:**
+   - Use `/setcommands` in BotFather to define your bot's commands.
 
-You need to setup the Treshholds for your Balance and Storage in `config.py`. The project is running on a `sqllite` db by default but can be exchanged if changing the `DEVELOPMENT` var in `config.py` to `False`, you'd then also need to provide a `DATABASE_URL`. 
+# SIA Bot Configuration
 
-# SIA Bot Usage
+1. **Configure Thresholds:**
+   - Set thresholds for balance and storage in `config.py`.
 
-You basically just have to text the bot (add it as a contact), from there on you'll see all available commands in the left burger-menu. You can subscribe/unsubscribe to events, check the balance and some other things.
+2. **Database Setup:**
+   - The default database is SQLite. To use another database, set `DEVELOPMENT` to `False` in `config.py` and provide a `DATABASE_URL`.
 
-# SIA Bot Extension
+# Using the SIA Bot
 
-This project aims for collaborators, it's beeing built to be easily extenable. It basically needs to add an event to which a user can subscribe and the HostD-API-Call and a Treshhold.
+1. **Add the Bot as a Contact:**
+   - Add your bot on Telegram.
 
-For instance:
+2. **Explore Commands:**
+   - Access all available commands via the left burger-menu.
 
-** Monitor pending contracts ** 
+3. **Functions:**
+   - Subscribe/unsubscribe to events.
+   - Check balance and more.
 
-We'd need this endpoint:
-https://api.sia.tech/hostd#87d43895-9980-466b-ba2b-c874af67217b
+# Extending the SIA Bot
 
-And integrate the call in `sia_handler.py`. The class is easily extenable. 
+1. **Add New Events:**
+   - Extend the bot by adding new events for users to subscribe to.
 
-The Treshhold Logic has to be added then to `main.py`. The logic can basically copied and adopted from the other calls/treshholds.
+2. **Monitor Pending Contracts Example:**
+   - Use the endpoint: [HostD API - Monitor Pending Contracts](https://api.sia.tech/hostd#87d43895-9980-466b-ba2b-c874af67217b).
+   - Integrate the call in `sia_handler.py`.
+
+3. **Add Threshold Logic:**
+   - Implement threshold logic in `main.py`.
+   - You can copy and adapt the existing logic from other calls/thresholds.
